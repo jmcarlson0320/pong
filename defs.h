@@ -47,13 +47,6 @@ typedef struct {
     ball b;
 } pong;
 
-typedef struct {
-    float x0;
-    float y0;
-    float x1;
-    float y1;
-} rect;
-
 // main.c
 void pong_init(pong *game);
 void pong_process_input(pong *game, App *app);

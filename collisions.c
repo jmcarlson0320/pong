@@ -1,6 +1,13 @@
 #include <tiny-fw.h>
 #include "defs.h"
 
+typedef struct {
+    float x0;
+    float y0;
+    float x1;
+    float y1;
+} rect;
+
 static int rect_collision(rect r0, rect r1);
 static void check_wall_collisions(ball *b);
 static void check_paddle_collisions(ball *b, player *p);

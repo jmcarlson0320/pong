@@ -56,21 +56,23 @@ typedef struct {
 
 // main.c
 void pong_init(pong *game);
+void pong_process_input(pong *game, App *app);
 void pong_update(pong *game, App *app);
 void pong_render(pong *game);
-void pong_process_input(pong *game, App *app);
-void pong_check_collisions(pong *game);
 
 // player.c
 void player_init(player *p, COLLIDE_TYPE id, int score);
-void player_update(player *p, App *app);
+void player_update(player *p, float dt);
 void player_render(player *p);
 void player_display_status(player *p, int x, int y);
 
 // ball.c
 void ball_init(ball *b, int x, int y, int dx, int dy);
-void ball_update(ball *b, App *app);
+void ball_update(ball *b, float dt);
 void ball_render(ball *b);
+
+// collisions.c
+void pong_check_collisions(pong *game);
 int rect_collision(rect r0, rect r1);
 void ball_check_wall_collisions(ball *b);
 void ball_check_paddle_collisions(ball *b, player *p);

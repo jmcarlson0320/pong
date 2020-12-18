@@ -27,14 +27,14 @@ void player_init(player *p, COLLIDE_TYPE id, int score)
     p->id = id;
 }
 
-void player_update(player *p, App *app)
+void player_update(player *p, float dt)
 {
     switch (p->dir) {
         case UP:
-            p->pos.e[Y_COOR] -= (PADDLE_SPEED * app->time.dt_sec);
+            p->pos.e[Y_COOR] -= (PADDLE_SPEED * dt);
             break;
         case DOWN:
-            p->pos.e[Y_COOR] += (PADDLE_SPEED * app->time.dt_sec);
+            p->pos.e[Y_COOR] += (PADDLE_SPEED * dt);
             break;
         default:
             break;
@@ -49,4 +49,3 @@ void player_render(player *p)
     draw_rect(x, y, x + PADDLE_WIDTH, y + PADDLE_HEIGHT, 0xffffff);
     player_display_status(p, 0, 0);
 }
-

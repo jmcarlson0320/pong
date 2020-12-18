@@ -1,6 +1,12 @@
 #include <tiny-fw.h>
 #include "defs.h"
 
+void pong_init(pong *game)
+{
+    player_init(&game->p1, PLAYER_1, 999);
+    ball_init(&game->b, 100, 100, 2, 1);
+}
+
 void pong_process_input(pong *game, App *app)
 {
     if (app->keyboard.pressed[KEY_Q])
@@ -14,23 +20,11 @@ void pong_process_input(pong *game, App *app)
         game->p1.dir = STOP;
 }
 
-void pong_check_collisions(pong *game)
-{
-    ball_check_paddle_collisions(&game->b, &game->p1);
-    ball_check_wall_collisions(&game->b);
-}
-
-void pong_init(pong *game)
-{
-    player_init(&game->p1, PLAYER_1, 999);
-    ball_init(&game->b, 100, 100, 2, 1);
-}
-
 void pong_update(pong *game, App *app)
 {
     pong_process_input(game, app);
-    player_update(&game->p1, app);
-    ball_update(&game->b, app);
+    player_update(&game->p1, app->time.dt_sec);
+    ball_update(&game->b, app->time.dt_sec);
     pong_check_collisions(game);
     ball_process_collision(&game->b);
 }

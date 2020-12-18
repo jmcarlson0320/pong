@@ -72,10 +72,7 @@ void ball_update(ball *b, float dt);
 void ball_render(ball *b);
 
 // collisions.c
-void pong_check_collisions(pong *game);
-int rect_collision(rect r0, rect r1);
-void ball_check_wall_collisions(ball *b);
-void ball_check_paddle_collisions(ball *b, player *p);
-void ball_process_collision(ball *b);
+void check_collisions(pong *game);
+void process_collision(ball *b);
 
 #endif // DEFS_H

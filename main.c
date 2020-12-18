@@ -25,8 +25,8 @@ void pong_update(pong *game, App *app)
     pong_process_input(game, app);
     player_update(&game->p1, app->time.dt_sec);
     ball_update(&game->b, app->time.dt_sec);
-    pong_check_collisions(game);
-    ball_process_collision(&game->b);
+    check_collisions(game);
+    process_collision(&game->b);
 }
 
 void pong_render(pong *game)

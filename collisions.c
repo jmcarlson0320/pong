@@ -11,33 +11,33 @@ void check_collisions(pong *game)
     check_wall_collisions(&game->b);
 }
 
-void process_collision(ball *b)
+void process_collisions(pong *game)
 {
-    switch (b->collision) {
+    switch (game->b.collision) {
         case LEFT:
-            b->pos.e[X_COOR] = BALL_SIZE;
-            b->vel.e[X_COOR] *= (-1);
+            game->b.pos.e[X_COOR] = BALL_SIZE;
+            game->b.vel.e[X_COOR] *= (-1);
             break;
         case RIGHT:
-            b->pos.e[X_COOR] = WIDTH - 1 - BALL_SIZE;
-            b->vel.e[X_COOR] *= (-1);
+            game->b.pos.e[X_COOR] = WIDTH - 1 - BALL_SIZE;
+            game->b.vel.e[X_COOR] *= (-1);
             break;
         case TOP:
-            b->pos.e[Y_COOR] = BALL_SIZE;
-            b->vel.e[Y_COOR] *= (-1);
+            game->b.pos.e[Y_COOR] = BALL_SIZE;
+            game->b.vel.e[Y_COOR] *= (-1);
             break;
         case BOTTOM:
-            b->pos.e[Y_COOR] = HEIGHT - 1 - BALL_SIZE;
-            b->vel.e[Y_COOR] *= (-1);
+            game->b.pos.e[Y_COOR] = HEIGHT - 1 - BALL_SIZE;
+            game->b.vel.e[Y_COOR] *= (-1);
             break;
         case PLAYER_1:
-            b->pos.e[X_COOR] = PADDLE_WIDTH + BALL_SIZE;
-            b->vel.e[X_COOR] *= (-1);
+            game->b.pos.e[X_COOR] = PADDLE_WIDTH + BALL_SIZE;
+            game->b.vel.e[X_COOR] *= (-1);
             break;
         default:
             break;
     }
-    b->collision = NONE;
+    game->b.collision = NONE;
 }
 
 static int rect_collision(rect r0, rect r1)

@@ -73,6 +73,6 @@ void ball_render(ball *b);
 
 // collisions.c
 void check_collisions(pong *game);
-void process_collision(ball *b);
+void process_collisions(pong *game);
 
 #endif // DEFS_H

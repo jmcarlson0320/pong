@@ -7,7 +7,8 @@
 #define PADDLE_SPEED 100
 #define PADDLE_WIDTH 5
 #define PADDLE_HEIGHT 20
-#define BALL_SPEED 10
+#define BALL_SPEED 50
+#define BALL_SIZE 2
 
 typedef enum {
     UP,
@@ -74,8 +75,31 @@ void player_render(player *p)
 {
     int x = p->pos.e[X_COOR];
     int y = p->pos.e[Y_COOR];
+
     draw_rect(x, y, x + PADDLE_WIDTH, y + PADDLE_HEIGHT, 0xffffff);
     player_display_status(p, 0, 0);
+}
+
+void ball_init(ball *b, int x, int y, int dx, int dy)
+{
+    b->pos.e[X_COOR] = x;
+    b->pos.e[Y_COOR] = y;
+    b->vel.e[X_COOR] = dx;
+    b->vel.e[Y_COOR] = dy;
+    vec2_normalize(&b->vel, &b->vel);
+    vec2_mult(&b->vel, &b->vel, BALL_SPEED);
+}
+
+void ball_update(ball *b, App *app)
+{
+    vec2 tmp = b->vel;
+    vec2_mult(&tmp, &tmp, app->time.dt_sec);
+    vec2_add(&b->pos, &b->pos, &tmp);
+}
+
+void ball_render(ball *b)
+{
+    draw_circle(b->pos.e[X_COOR], b->pos.e[Y_COOR], BALL_SIZE, 0xffffff);
 }
 
 void pong_process_input(pong *game, App *app)
@@ -93,19 +117,22 @@ void pong_process_input(pong *game, App *app)
 
 void pong_init(pong *game)
 {
-    player_init(&game->p1, 100);
+    player_init(&game->p1, 999);
+    ball_init(&game->b, 100, 100, 2, 1);
 }
 
 void pong_update(pong *game, App *app)
 {
     pong_process_input(game, app);
     player_update(&game->p1, app);
+    ball_update(&game->b, app);
 }
 
 void pong_render(pong *game)
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
     player_render(&game->p1);
+    ball_render(&game->b);
 }
 
 int main(int argc, char *argv[])

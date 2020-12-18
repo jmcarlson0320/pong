@@ -4,7 +4,7 @@ LIBS = -L/home/jmc/lib -ltinyfw -lm -lSDL2
 EXE = app
 
 $(EXE): main.o
-	$(CC) $(INCLUDES) -o $@ $^ $(LIBS)
+	$(CC) -o $@ $^ $(LIBS)
 
 clean:
 	rm *.o $(EXE)

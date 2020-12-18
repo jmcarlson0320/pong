@@ -4,6 +4,7 @@
 void pong_init(pong *game)
 {
     player_init(&game->p1, PLAYER_1, 999);
+    player_init(&game->p2, PLAYER_2, 100);
     ball_init(&game->b, 100, 100, 2, 1);
 }
 
@@ -12,18 +13,26 @@ void pong_process_input(pong *game, App *app)
     if (app->keyboard.pressed[KEY_Q])
         app->running = 0;
 
-    if (app->keyboard.down[KEY_UP])
+    if (app->keyboard.down[KEY_W])
         game->p1.dir = UP;
-    else if (app->keyboard.down[KEY_DOWN])
+    else if (app->keyboard.down[KEY_S])
         game->p1.dir = DOWN;
     else
         game->p1.dir = STOP;
+
+    if (app->keyboard.down[KEY_UP])
+        game->p2.dir = UP;
+    else if (app->keyboard.down[KEY_DOWN])
+        game->p2.dir = DOWN;
+    else
+        game->p2.dir = STOP;
 }
 
 void pong_update(pong *game, App *app)
 {
     pong_process_input(game, app);
     player_update(&game->p1, app->time.dt_sec);
+    player_update(&game->p2, app->time.dt_sec);
     ball_update(&game->b, app->time.dt_sec);
     check_collisions(game);
     process_collisions(game);
@@ -33,6 +42,7 @@ void pong_render(pong *game)
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
     player_render(&game->p1);
+    player_render(&game->p2);
     ball_render(&game->b);
 }
 

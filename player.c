@@ -5,6 +5,7 @@
 void player_display_status(player *p, int x, int y)
 {
     char *status;
+    char *player;
     char buffer[80];
 
     if (p->dir == UP)
@@ -14,17 +15,27 @@ void player_display_status(player *p, int x, int y)
     else
         status = "STOP";
 
-    snprintf(buffer, 80, "Player1:\nscore: %d\npos: %f, %f\ndir: %s\n", p->score, p->pos.e[X_COOR], p->pos.e[Y_COOR], status);
+    if (p->id == PLAYER_1)
+        player = "Player1";
+    else
+        player = "Player2";
+
+    snprintf(buffer, 80, "%s:\nscore: %d\npos: %f, %f\ndir: %s\n", player, p->score, p->pos.e[X_COOR], p->pos.e[Y_COOR], status);
     draw_text(buffer, x, y, 0xffff00);
 }
 
 void player_init(player *p, COLLIDE_TYPE id, int score)
 {
-    p->score = score;
-    p->pos.e[X_COOR] = 0;
-    p->pos.e[Y_COOR] = 0;
-    p->dir = STOP;
     p->id = id;
+    p->score = score;
+    if (p->id == PLAYER_1) {
+        p->pos.e[X_COOR] = 0;
+        p->pos.e[Y_COOR] = 0;
+    } else if (p->id == PLAYER_2) {
+        p->pos.e[X_COOR] = WIDTH - 1 - PADDLE_WIDTH;
+        p->pos.e[Y_COOR] = 0;
+    }
+        p->dir = STOP;
 }
 
 void player_update(player *p, float dt)
@@ -47,5 +58,9 @@ void player_render(player *p)
     int y = p->pos.e[Y_COOR];
 
     draw_rect(x, y, x + PADDLE_WIDTH, y + PADDLE_HEIGHT, 0xffffff);
-    player_display_status(p, 0, 0);
+    if (p->id == PLAYER_1)
+        player_display_status(p, 0, 0);
+    else
+        player_display_status(p, 283, 0);
+        
 }

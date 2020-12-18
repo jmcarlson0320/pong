@@ -15,6 +15,7 @@ static void check_paddle_collisions(ball *b, player *p);
 void check_collisions(pong *game)
 {
     check_paddle_collisions(&game->b, &game->p1);
+    check_paddle_collisions(&game->b, &game->p2);
     check_wall_collisions(&game->b);
 }
 
@@ -39,6 +40,10 @@ void process_collisions(pong *game)
             break;
         case PLAYER_1:
             game->b.pos.e[X_COOR] = PADDLE_WIDTH + BALL_SIZE;
+            game->b.vel.e[X_COOR] *= (-1);
+            break;
+        case PLAYER_2:
+            game->b.pos.e[X_COOR] = WIDTH - 1 - PADDLE_WIDTH - BALL_SIZE;
             game->b.vel.e[X_COOR] *= (-1);
             break;
         default:

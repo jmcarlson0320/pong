@@ -7,7 +7,7 @@
 #define PADDLE_SPEED 100
 #define PADDLE_WIDTH 5
 #define PADDLE_HEIGHT 20
-#define BALL_SPEED 50
+#define BALL_SPEED 200
 #define BALL_SIZE 2
 
 typedef enum {
@@ -15,6 +15,16 @@ typedef enum {
     DOWN,
     STOP
 } STATUS;
+
+typedef enum {
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM,
+    PADDLE_1,
+    PADDLE_2,
+    NONE
+} COLLIDE_TYPE;
 
 typedef struct {
     int score;
@@ -25,6 +35,7 @@ typedef struct {
 typedef struct {
     point2 pos;
     vec2 vel;
+    COLLIDE_TYPE collision;
 } ball;
 
 typedef struct {
@@ -88,6 +99,7 @@ void ball_init(ball *b, int x, int y, int dx, int dy)
     b->vel.e[Y_COOR] = dy;
     vec2_normalize(&b->vel, &b->vel);
     vec2_mult(&b->vel, &b->vel, BALL_SPEED);
+    b->collision = NONE;
 }
 
 void ball_update(ball *b, App *app)
@@ -95,6 +107,31 @@ void ball_update(ball *b, App *app)
     vec2 tmp = b->vel;
     vec2_mult(&tmp, &tmp, app->time.dt_sec);
     vec2_add(&b->pos, &b->pos, &tmp);
+    
+    // make a method: process_collision(ball *b);
+    //
+    // ends w/ b->collision = NONE;
+    switch (b->collision) {
+        case LEFT:
+            b->pos.e[X_COOR] = BALL_SIZE;
+            b->vel.e[X_COOR] *= (-1);
+            break;
+        case RIGHT:
+            b->pos.e[X_COOR] = WIDTH - 1 - BALL_SIZE;
+            b->vel.e[X_COOR] *= (-1);
+            break;
+        case TOP:
+            b->pos.e[Y_COOR] = BALL_SIZE;
+            b->vel.e[Y_COOR] *= (-1);
+            break;
+        case BOTTOM:
+            b->pos.e[Y_COOR] = HEIGHT - 1 - BALL_SIZE;
+            b->vel.e[Y_COOR] *= (-1);
+            break;
+        default:
+            break;
+    }
+    b->collision = NONE;
 }
 
 void ball_render(ball *b)
@@ -126,6 +163,18 @@ void pong_update(pong *game, App *app)
     pong_process_input(game, app);
     player_update(&game->p1, app);
     ball_update(&game->b, app);
+
+    // make a method: check_ball_wall_collisions(pong *game)
+    float x = game->b.pos.e[X_COOR];
+    float y = game->b.pos.e[Y_COOR];
+    if (x < BALL_SIZE)
+        game->b.collision = LEFT;
+    if (x > WIDTH - 1 - BALL_SIZE)
+        game->b.collision = RIGHT;
+    if (y < BALL_SIZE)
+        game->b.collision = TOP;
+    if (y > HEIGHT - 1 - BALL_SIZE)
+        game->b.collision = BOTTOM;
 }
 
 void pong_render(pong *game)

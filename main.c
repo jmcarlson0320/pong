@@ -91,26 +91,26 @@ void player_render(player *p)
     player_display_status(p, 0, 0);
 }
 
-void ball_init(ball *b, int x, int y, int dx, int dy)
+void ball_check_wall_collisions(ball *b)
 {
-    b->pos.e[X_COOR] = x;
-    b->pos.e[Y_COOR] = y;
-    b->vel.e[X_COOR] = dx;
-    b->vel.e[Y_COOR] = dy;
-    vec2_normalize(&b->vel, &b->vel);
-    vec2_mult(&b->vel, &b->vel, BALL_SPEED);
-    b->collision = NONE;
+    float x = b->pos.e[X_COOR];
+    float y = b->pos.e[Y_COOR];
+    if (x < BALL_SIZE)
+        b->collision = LEFT;
+    if (x > WIDTH - 1 - BALL_SIZE)
+        b->collision = RIGHT;
+    if (y < BALL_SIZE)
+        b->collision = TOP;
+    if (y > HEIGHT - 1 - BALL_SIZE)
+        b->collision = BOTTOM;
 }
 
-void ball_update(ball *b, App *app)
+void ball_check_paddle_collisions(ball *b, player *p)
 {
-    vec2 tmp = b->vel;
-    vec2_mult(&tmp, &tmp, app->time.dt_sec);
-    vec2_add(&b->pos, &b->pos, &tmp);
-    
-    // make a method: process_collision(ball *b);
-    //
-    // ends w/ b->collision = NONE;
+}
+
+void ball_process_collision(ball *b)
+{
     switch (b->collision) {
         case LEFT:
             b->pos.e[X_COOR] = BALL_SIZE;
@@ -134,6 +134,25 @@ void ball_update(ball *b, App *app)
     b->collision = NONE;
 }
 
+void ball_init(ball *b, int x, int y, int dx, int dy)
+{
+    b->pos.e[X_COOR] = x;
+    b->pos.e[Y_COOR] = y;
+    b->vel.e[X_COOR] = dx;
+    b->vel.e[Y_COOR] = dy;
+    vec2_normalize(&b->vel, &b->vel);
+    vec2_mult(&b->vel, &b->vel, BALL_SPEED);
+    b->collision = NONE;
+}
+
+void ball_update(ball *b, App *app)
+{
+    vec2 tmp = b->vel;
+    vec2_mult(&tmp, &tmp, app->time.dt_sec);
+    vec2_add(&b->pos, &b->pos, &tmp);
+    ball_process_collision(b);
+}
+
 void ball_render(ball *b)
 {
     draw_circle(b->pos.e[X_COOR], b->pos.e[Y_COOR], BALL_SIZE, 0xffffff);
@@ -152,6 +171,12 @@ void pong_process_input(pong *game, App *app)
         game->p1.dir = STOP;
 }
 
+void pong_check_collisions(pong *game)
+{
+    ball_check_wall_collisions(&game->b);
+    ball_check_paddle_collisions(&game->b, &game->p1);
+}
+
 void pong_init(pong *game)
 {
     player_init(&game->p1, 999);
@@ -163,18 +188,7 @@ void pong_update(pong *game, App *app)
     pong_process_input(game, app);
     player_update(&game->p1, app);
     ball_update(&game->b, app);
-
-    // make a method: check_ball_wall_collisions(pong *game)
-    float x = game->b.pos.e[X_COOR];
-    float y = game->b.pos.e[Y_COOR];
-    if (x < BALL_SIZE)
-        game->b.collision = LEFT;
-    if (x > WIDTH - 1 - BALL_SIZE)
-        game->b.collision = RIGHT;
-    if (y < BALL_SIZE)
-        game->b.collision = TOP;
-    if (y > HEIGHT - 1 - BALL_SIZE)
-        game->b.collision = BOTTOM;
+    pong_check_collisions(game);
 }
 
 void pong_render(pong *game)
